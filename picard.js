@@ -35,7 +35,6 @@ var PiCard = (function() {
     };
 
     var createChart = function(data, target) {
-        target.empty();
         var users = [];
         var userTotals = {};
         var grandTotal = 0;
@@ -51,6 +50,8 @@ var PiCard = (function() {
             grandTotal += total;
         }
         var userColors = getUserColors(users);
+
+        target.empty();
 
         var legend = $("<div style='margin-bottom: 1em'>"
             + "<span style='margin-right: 1ex; white-space: nowrap'>"
@@ -73,18 +74,14 @@ var PiCard = (function() {
         target.append(container);
 
         var measure = getMeasurements();
-
         var stage = new Kinetic.Stage({
             container: containerID,
             width:     measure.width,
             height:    measure.height
         });
-        var plotArea = createPlotArea(measure);
-        stage.add(plotArea);
-        var plot = createPlot(data, userColors, measure);
-        stage.add(plot);
-        var axes = createAxes(measure);
-        stage.add(axes);
+        stage.add(createPlotArea(measure));
+        stage.add(createPlot(data, userColors, measure));
+        stage.add(createAxes(measure));
     };
 
     var createPlotArea = function(measure) {
@@ -352,8 +349,8 @@ var PiCard = (function() {
             var tabID = "pc-tab-" + i;
             var tab = addTab(tabName, tabID, tabList, container);
             queue.push({
-                name: tabName,
-                url: sources[i].url,
+                name:   tabName,
+                url:    sources[i].url,
                 target: tab
             });
         }
@@ -373,8 +370,8 @@ var PiCard = (function() {
     };
 
     return {
-        options: opt,
-        locale: loc,
+        options:    opt,
+        locale:     loc,
         initialize: initialize
     };
 })();
