@@ -10,12 +10,13 @@
 <script src="picard.js"></script>
 <script>
 $(document).ready(function() {
+    var token = new Date().getTime();
     PiCard.initialize($("#container"), [
-        { name: "Project A", url: "example-data/project1.json" },
-        { name: "Project B", url: "example-data/project2.json" },
-        { name: "Project C", url: "example-data/project3.json" },
-        { name: "Project D", url: "example-data/project4.json" },
-        { name: "Project E", url: "example-data/project5.json" }
+        { name: "Project A", url: "example-data/project1.json?" + token },
+        { name: "Project B", url: "example-data/project2.json?" + token },
+        { name: "Project C", url: "example-data/project3.json?" + token },
+        { name: "Project D", url: "example-data/project4.json?" + token },
+        { name: "Project E", url: "example-data/project5.json?" + token }
     ]);
 });
 </script>
