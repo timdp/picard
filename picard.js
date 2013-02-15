@@ -28,10 +28,11 @@ var PiCard = (function() {
     };
 
     var loc = {
-        dayNames:     [ "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" ],
-        summaryTitle: "Summary",
-        summaryLabel: "Commits:",
-        loadingText:  "Loading …"
+        dayNames:           [ "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" ],
+        summaryTitle:       "Summary",
+        summaryLabel:       "Commits:",
+        loadingText:        "Loading …",
+        thousandsSeparator: ","
     };
 
     var createChart = function(data, target) {
@@ -55,7 +56,7 @@ var PiCard = (function() {
 
         var legend = $("<div style='margin-bottom: 1em'>"
             + "<span style='margin-right: 1ex; white-space: nowrap'>"
-            + loc.summaryLabel + " " + grandTotal
+            + loc.summaryLabel + " " + formatNumber(grandTotal)
             + "</span></div>");
         for (var i = 0; i < users.length; i++) {
             legend.append(" ");
@@ -65,7 +66,8 @@ var PiCard = (function() {
                     marginRight: "1ex",
                     whiteSpace:  "nowrap"
                 })
-                .text(users[i] + " (" + userTotals[users[i]] + ")"));
+                .text(users[i]
+                    + " (" + formatNumber(userTotals[users[i]]) + ")"));
         }
         target.append(legend);
 
@@ -335,6 +337,20 @@ var PiCard = (function() {
                 }
             }
         }
+    };
+
+    var formatNumber = function(number) {
+        number = "" + number;
+        var re = /^([0-9]+)([0-9]{3})$/;
+        var match = true;
+        while (match) {
+            match = false;
+            number = number.replace(re, function(m0, m1, m2) {
+                match = true;
+                return m1 + loc.thousandsSeparator + m2;
+            });
+        }
+        return number;
     };
 
     var initialize = function(container, sources) {
