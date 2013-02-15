@@ -16,7 +16,7 @@ foreach (range(1, $num_projects) as $project_id) {
     $data = array();
     $user_count = mt_rand($min_users, $max_users);
     foreach (range(1, $user_count) as $user_id) {
-        $user_name = "User $user_count";
+        $user_name = "User $user_id";
         foreach (range(0, 6) as $day) {
             foreach (range(0, 23) as $hour) {
                 $commit_count = mt_rand($min_commits, $max_commits);
