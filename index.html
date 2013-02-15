@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>PiCard Example</title>
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/base/jquery-ui.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js"></script>
+<script src="//d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.min.js"></script>
+<script src="picard.js"></script>
+<script>
+$(document).ready(function() {
+    PiCard.initialize($("#container"), [
+        { name: "Project A", url: "example-data/project1.json" },
+        { name: "Project B", url: "example-data/project2.json" },
+        { name: "Project C", url: "example-data/project3.json" },
+        { name: "Project D", url: "example-data/project4.json" },
+        { name: "Project E", url: "example-data/project5.json" }
+    ]);
+});
+</script>
+</head>
+<body>
+<p>This is a demonstration of PiCard with some dummy data.</p>
+<div id="container">
+Loading&nbsp;&hellip;
+</div>
+</body>
+</html>
