@@ -360,9 +360,9 @@ var PiCard = (function() {
         container.tabs();
         var summaryData = {};
         processQueue(queue, summaryData);
-     };
+    };
 
-     var addTab = function(tabName, tabID, tabList, container) {
+    var addTab = function(tabName, tabID, tabList, container) {
         tabList.append($("<li/>")
             .append($("<a/>")
                 .attr("href", "#" + tabID).text(tabName)));
@@ -370,7 +370,7 @@ var PiCard = (function() {
             .text(loc.loadingText);
         container.append(tab);
         return tab;
-     };
+    };
 
     return {
         options: opt,
