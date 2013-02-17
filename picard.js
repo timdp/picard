@@ -111,22 +111,14 @@ var PiCard = (function() {
         });
         var legend = $("<div/>")
             .attr("class", "picard-legend")
-            .css("margin-bottom", "1em")
             .append($("<span/>")
-                .css({
-                    marginRight: "1ex",
-                    whiteSpace: "nowrap"
-                })
+                .attr("class", "picard-legend-label")
                 .text(loc.summaryLabel + " " + formatNumber(grandTotal)));
         $.each(users, function(i, user) {
             legend.append(" ");
             legend.append($("<span>")
-                .css({
-                    color:       userColors[user],
-                    marginRight: "1ex",
-                    whiteSpace:  "nowrap",
-                    cursor:      "help"
-                })
+                .attr("class", "picard-legend-item")
+                .css("color", userColors[user])
                 .mouseover({ user: user, layers: layers }, setActive)
                 .mouseout({ user: null, layers: layers }, setActive)
                 .text(user + " (" + formatNumber(userTotals[user]) + ")"));
