@@ -58,9 +58,9 @@ var PiCard = (function() {
 
     var sortUserNames = function(data) {
         var users = [];
-        for (user in data) {
+        $.each(data, function(user, perDay) {
             users.push(user);
-        }
+        });
         users.sort();
         return users;
     };
@@ -207,25 +207,24 @@ var PiCard = (function() {
         var radius = ratio * opt.maxPieRadius;
         var angle = (opt.startAngle === null)
             ? Math.random() * 360 : opt.startAngle;
-        for (user in data) {
-            if (!data[user][d] || !data[user][d][h]) {
-                continue;
+        $.each(data, function(user, perDay) {
+            if (perDay[d] && perDay[d][h]) {
+                var degrees = 360 * (perDay[d][h] / total);
+                if (opt.clockWise) {
+                    degrees = -degrees;
+                }
+                var wedge = new Kinetic.Wedge({
+                    x:           x,
+                    y:           y,
+                    radius:      radius,
+                    rotationDeg: angle,
+                    angleDeg:    degrees,
+                    fill:        userColors[user]
+                });
+                plots[user].add(wedge);
+                angle += degrees;
             }
-            var degrees = 360 * (data[user][d][h] / total);
-            if (opt.clockWise) {
-                degrees = -degrees;
-            }
-            var wedge = new Kinetic.Wedge({
-                x:           x,
-                y:           y,
-                radius:      radius,
-                rotationDeg: angle,
-                angleDeg:    degrees,
-                fill:        userColors[user]
-            });
-            plots[user].add(wedge);
-            angle += degrees;
-        }
+        });
     };
 
     var getRatio = function(value, max) {
@@ -308,11 +307,11 @@ var PiCard = (function() {
             var dayTotals = [];
             for (var h = 0; h < 24; h++) {
                 dayTotals[h] = 0;
-                for (user in data) {
-                    if (data[user][d] && data[user][d][h]) {
-                        dayTotals[h] += data[user][d][h];
+                $.each(data, function(user, perDay) {
+                    if (perDay[d] && perDay[d][h]) {
+                        dayTotals[h] += perDay[d][h];
                     }
-                }
+                });
             }
             totals[d] = dayTotals;
         }
@@ -395,13 +394,13 @@ var PiCard = (function() {
             }
             summaryData[name][d] = dayData;
         }
-        for (user in data) {
-            for (d in data[user]) {
-                for (h in data[user][d]) {
-                    summaryData[name][d][h] += data[user][d][h];
-                }
-            }
-        }
+        $.each(data, function(user, perDay) {
+            $.each(perDay, function(d, perHour) {
+                $.each(perHour, function(h, amount) {
+                    summaryData[name][d][h] += amount;
+                });
+            });
+        });
     };
 
     var formatNumber = function(number) {
