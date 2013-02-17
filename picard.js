@@ -32,6 +32,7 @@ var PiCard = (function() {
         summaryTitle:       "Summary",
         summaryLabel:       "Commits:",
         loadingText:        "Loading …",
+        loadingFailedText:  "Failed to load data. Reload to try again.",
         thousandsSeparator: ","
     };
 
@@ -302,23 +303,22 @@ var PiCard = (function() {
     };
 
     var processQueue = function(queue, summaryData) {
-        var nextEntry = function(i) {
-            if (i < queue.length) {
-                $.ajax(queue[i].url)
-                    .done(function(data) {
-                        createChart(data, queue[i].target);
-                        updateSummary(queue[i].name, data, summaryData);
-                        nextEntry(i + 1);
-                    })
-                    .fail(function(xhr, stat, err) {
-                        // TODO
-                        alert("Failed to load data. Reload to try again.");
-                    });
-            } else {
-                createChart(summaryData, $("#pc-tab-summary"));
-            }
-        };
-        nextEntry(0);
+        if (queue.length) {
+            var entry = queue.shift();
+            $.ajax(entry.url)
+                .done(function(data) {
+                    createChart(data, entry.target);
+                    updateSummary(entry.name, data, summaryData);
+                })
+                .fail(function(xhr, stat, err) {
+                    entry.target.text(loc.loadingFailedText);
+                })
+                .always(function() {
+                    processQueue(queue, summaryData);
+                });
+        } else {
+            createChart(summaryData, $("#pc-tab-summary"));
+        }
     };
 
     var updateSummary = function(name, data, summaryData) {
