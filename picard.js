@@ -16,6 +16,7 @@ var PiCard = (function() {
         clockwise:          true,
         drawAllPlotMarkers: false,
         dotScale:           "quad",
+        legendFormat:       "{0} ({1})",
         fontFamily:         "Verdana, Arial, Helvetica, sans-serif",
         fontSize:           12,
         activeOpacity:      1.0,
@@ -115,13 +116,19 @@ var PiCard = (function() {
                 .attr("class", "picard-legend-label")
                 .text(loc.summaryLabel + " " + formatNumber(grandTotal)));
         $.each(users, function(i, user) {
+            var strings = [ user, formatNumber(userTotals[user]) ];
+            var code = opt.legendFormat.replace(
+                /\{([0-9]+)\}/g,
+                function(m0, m1) {
+                    return strings[parseInt(m1, 10)];
+                });
             legend.append(" ");
             legend.append($("<span>")
                 .attr("class", "picard-legend-item")
                 .css("color", userColors[user])
                 .mouseover({ user: user, layers: layers }, setActive)
                 .mouseout({ user: null, layers: layers }, setActive)
-                .text(user + " (" + formatNumber(userTotals[user]) + ")"));
+                .html(code));
         });
         return legend;
     };
