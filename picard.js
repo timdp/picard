@@ -6,23 +6,24 @@
 
 var PiCard = (function() {
     var opt = {
-        axisWidth:       1,
-        plotPadding:     10,
-        labelMargin:     10,
-        plotMarkerSize:  6,
-        plotMarkerWidth: 1,
-        maxPieRadius:    20,
-        startAngle:      -90,
-        clockwise:       true,
-        dotScale:        "quad",
-        fontFamily:      "Verdana, Arial, Helvetica, sans-serif",
-        fontSize:        12,
-        activeOpacity:   1.0,
-        inactiveOpacity: 0.2,
-        axisColor:       "#666",
-        plotMarkerColor: "#999",
-        axisLabelColor:  "#666",
-        pieColors:       [
+        axisWidth:          1,
+        plotPadding:        10,
+        labelMargin:        10,
+        plotMarkerSize:     6,
+        plotMarkerWidth:    1,
+        maxPieRadius:       20,
+        startAngle:         -90,
+        clockwise:          true,
+        drawAllPlotMarkers: false,
+        dotScale:           "quad",
+        fontFamily:         "Verdana, Arial, Helvetica, sans-serif",
+        fontSize:           12,
+        activeOpacity:      1.0,
+        inactiveOpacity:    0.2,
+        axisColor:          "#666",
+        plotMarkerColor:    "#999",
+        axisLabelColor:     "#666",
+        pieColors:          [
             "#C90", "#0C9", "#90C", "#9C0", "#09C", "#C09",
             "#C00", "#0C0", "#00C", "#099", "#909", "#990",
             "#C66", "#6C6", "#66C", "#999"
@@ -54,6 +55,7 @@ var PiCard = (function() {
             grandTotal += total;
         }
         var userColors = getUserColors(users);
+        var totals = calculateTotals(data);
 
         var plots = {};
         $.each(users, function(i, user) {
@@ -93,8 +95,8 @@ var PiCard = (function() {
             width:     measure.width,
             height:    measure.height
         });
-        stage.add(createPlotArea(measure));
-        createPlots(plots, data, userColors, measure);
+        stage.add(createPlotArea(totals, measure));
+        createPlots(plots, totals, data, userColors, measure);
         $.each(plots, function(user, plot) {
             stage.add(plot);
         });
@@ -117,7 +119,7 @@ var PiCard = (function() {
         }
     };
 
-    var createPlotArea = function(measure) {
+    var createPlotArea = function(totals, measure) {
         var plotArea = new Kinetic.Layer();
         var x0 = measure.yLabelWidth + opt.labelMargin + opt.axisWidth
             + opt.plotPadding + opt.maxPieRadius;
@@ -126,16 +128,18 @@ var PiCard = (function() {
         for (var d = 0; d < 7; d++) {
             var x = x0;
             for (var h = 0; h < 24; h++) {
-                plotArea.add(new Kinetic.Line({
-                    points:      [ x - s, y, x + s, y ],
-                    stroke:      opt.plotMarkerColor,
-                    strokeWidth: opt.plotMarkerWidth
-                }));
-                plotArea.add(new Kinetic.Line({
-                    points:      [ x, y - s, x, y + s ],
-                    stroke:      opt.plotMarkerColor,
-                    strokeWidth: opt.plotMarkerWidth
-                }));
+                if (opt.drawAllPlotMarkers || !totals[d][h]) {
+                    plotArea.add(new Kinetic.Line({
+                        points:      [ x - s, y, x + s, y ],
+                        stroke:      opt.plotMarkerColor,
+                        strokeWidth: opt.plotMarkerWidth
+                    }));
+                    plotArea.add(new Kinetic.Line({
+                        points:      [ x, y - s, x, y + s ],
+                        stroke:      opt.plotMarkerColor,
+                        strokeWidth: opt.plotMarkerWidth
+                    }));
+                }
                 x += opt.maxPieRadius * 2;
             }
             y += opt.maxPieRadius * 2;
@@ -143,8 +147,7 @@ var PiCard = (function() {
         return plotArea;
     };
 
-    var createPlots = function(plots, data, userColors, measure) {
-        var totals = calculateTotals(data);
+    var createPlots = function(plots, totals, data, userColors, measure) {
         var max = getMaximum(totals);
         var x0 = measure.yLabelWidth + opt.labelMargin + opt.axisWidth
             + opt.plotPadding + opt.maxPieRadius;
