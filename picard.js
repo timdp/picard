@@ -109,10 +109,15 @@ var PiCard = (function() {
             userTotals[user] = total;
             grandTotal += total;
         });
-        var legend = $("<div class='pc-legend' style='margin-bottom: 1em'>"
-            + "<span style='margin-right: 1ex; white-space: nowrap'>"
-            + loc.summaryLabel + " " + formatNumber(grandTotal)
-            + "</span></div>");
+        var legend = $("<div/>")
+            .attr("class", "picard-legend")
+            .css("margin-bottom", "1em")
+            .append($("<span/>")
+                .css({
+                    marginRight: "1ex",
+                    whiteSpace: "nowrap"
+                })
+                .text(loc.summaryLabel + " " + formatNumber(grandTotal)));
         $.each(users, function(i, user) {
             legend.append(" ");
             legend.append($("<span>")
@@ -124,8 +129,7 @@ var PiCard = (function() {
                 })
                 .mouseover({ user: user, layers: layers }, setActive)
                 .mouseout({ user: null, layers: layers }, setActive)
-                .text(user + " (" + formatNumber(userTotals[user]) + ")")
-                );
+                .text(user + " (" + formatNumber(userTotals[user]) + ")"));
         });
         return legend;
     };
@@ -378,7 +382,7 @@ var PiCard = (function() {
                     processQueue(queue, summaryData);
                 });
         } else {
-            createChart(summaryData, $("#pc-tab-summary"));
+            createChart(summaryData, $("#picard-tab-summary"));
         }
     };
 
@@ -419,11 +423,11 @@ var PiCard = (function() {
         container.empty();
         var tabList = $("<ul/>");
         container.append(tabList);
-        var tabID = "pc-tab-summary";
+        var tabID = "picard-tab-summary";
         var tab = addTab(loc.summaryTitle, tabID, tabList, container);
         for (var i = 0; i < sources.length; i++) {
             var tabName = sources[i].name;
-            var tabID = "pc-tab-" + i;
+            var tabID = "picard-tab-" + i;
             var tab = addTab(tabName, tabID, tabList, container);
             queue.push({
                 name:   tabName,
@@ -440,7 +444,7 @@ var PiCard = (function() {
         tabList.append($("<li/>")
             .append($("<a/>")
                 .attr("href", "#" + tabID).text(tabName)));
-        var tab = $("<div/>").attr("id", tabID).addClass("pc-tab")
+        var tab = $("<div/>").attr("id", tabID).addClass("picard-tab")
             .text(loc.loadingText);
         container.append(tab);
         return tab;
