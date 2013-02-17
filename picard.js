@@ -28,7 +28,8 @@ var PiCard = (function() {
             "#C90", "#0C9", "#90C", "#9C0", "#09C", "#C09",
             "#C00", "#0C0", "#00C", "#099", "#909", "#990",
             "#C66", "#6C6", "#66C", "#999"
-        ]
+        ],
+        usersKey:           ".users"
     };
 
     var loc = {
@@ -41,7 +42,13 @@ var PiCard = (function() {
     };
 
     var createChart = function(data, target) {
-        var users = sortUserNames(data);
+        var users;
+        if (opt.usersKey !== undefined && opt.usersKey in data) {
+            users = data[opt.usersKey];
+            delete data[opt.usersKey];
+        } else {
+            users = sortUserNames(data);
+        }
         var userColors = getUserColors(users);
         var measure = getMeasurements();
         var layers = createLayers(data, userColors, measure);
