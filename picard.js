@@ -40,34 +40,76 @@ var PiCard = (function() {
     };
 
     var createChart = function(data, target) {
+        var users = sortUserNames(data);
+        var userColors = getUserColors(users);
+        var measure = getMeasurements();
+        var layers = createLayers(data, userColors, measure);
+        var legend = createLegend(users, data, userColors, layers);
+
+        var containerID = target.attr("id") + "-container";
+        var container = $("<div>").attr("id", containerID);
+        target.empty();
+        target
+            .append(legend)
+            .append(container);
+
+        createStage(containerID, layers, measure);
+    };
+
+    var sortUserNames = function(data) {
         var users = [];
-        var userTotals = {};
-        var grandTotal = 0;
         for (user in data) {
             users.push(user);
-            var total = 0;
-            for (d in data[user]) {
-                for (h in data[user][d]) {
-                    total += data[user][d][h];
-                }
-            }
-            userTotals[user] = total;
-            grandTotal += total;
         }
-        var userColors = getUserColors(users);
-        var totals = calculateTotals(data);
+        users.sort();
+        return users;
+    };
 
-        var measure = getMeasurements();
+    var createStage = function(containerID, layers, measure) {
+        var stage = new Kinetic.Stage({
+            container: containerID,
+            width:     measure.width,
+            height:    measure.height
+        });
+        stage.add(layers.plotArea);
+        $.each(layers.plots, function(user, plot) {
+            stage.add(plot);
+        });
+        stage.add(layers.axes);
+        return stage;
+    };
+
+    var createLayers = function(data, userColors, measure) {
+        var totals = calculateTotals(data);
         var plots = {};
-        $.each(users, function(i, user) {
+        $.each(userColors, function(user, color) {
             plots[user] = new Kinetic.Layer();
             plots[user].setOpacity(opt.activeOpacity);
         });
         createPlots(plots, totals, data, userColors, measure); 
         var plotArea = createPlotArea(totals, measure);
         var axes = createAxes(measure);
+        return {
+            plotArea: plotArea,
+            plots:    plots,
+            axes:     axes
+        };
+    };
 
-        var legend = $("<div style='margin-bottom: 1em'>"
+    var createLegend = function(users, data, userColors, layers) {
+        var userTotals = {};
+        var grandTotal = 0;
+        $.each(data, function(user, perDay) {
+            var total = 0;
+            $.each(perDay, function(d, perHour) {
+                $.each(perHour, function(h, amount) {
+                    total += amount;
+                });
+            });
+            userTotals[user] = total;
+            grandTotal += total;
+        });
+        var legend = $("<div class='pc-legend' style='margin-bottom: 1em'>"
             + "<span style='margin-right: 1ex; white-space: nowrap'>"
             + loc.summaryLabel + " " + formatNumber(grandTotal)
             + "</span></div>");
@@ -80,39 +122,18 @@ var PiCard = (function() {
                     whiteSpace:  "nowrap",
                     cursor:      "help"
                 })
-                .mouseover(
-                    { user: user, plots: plots, plotArea: plotArea },
-                    setActive)
-                .mouseout(
-                    { user: null, plots: plots, plotArea: plotArea },
-                    setActive)
+                .mouseover({ user: user, layers: layers }, setActive)
+                .mouseout({ user: null, layers: layers }, setActive)
                 .text(user + " (" + formatNumber(userTotals[user]) + ")")
                 );
         });
-
-        var containerID = target.attr("id") + "-container";
-        var container = $("<div>").attr("id", containerID);
-
-        target.empty();
-        target.append(legend);
-        target.append(container);
-
-        var stage = new Kinetic.Stage({
-            container: containerID,
-            width:     measure.width,
-            height:    measure.height
-        });
-        stage.add(plotArea);
-        $.each(plots, function(user, plot) {
-            stage.add(plot);
-        });
-        stage.add(axes);
+        return legend;
     };
 
     var setActive = function(event) {
         var user = event.data.user;
-        var plots = event.data.plots;
-        var plotArea = event.data.plotArea;
+        var plots = event.data.layers.plots;
+        var plotArea = event.data.layers.plotArea;
         $.each(plots, function(u, plot) {
             setOpacity(plot, (user === null || user == u)
                 ? opt.activeOpacity : opt.inactiveOpacity);
