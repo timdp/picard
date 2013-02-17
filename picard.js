@@ -17,6 +17,8 @@ var PiCard = (function() {
         dotScale:        "quad",
         fontFamily:      "Verdana, Arial, Helvetica, sans-serif",
         fontSize:        12,
+        activeOpacity:   1.0,
+        inactiveOpacity: 0.2,
         axisColor:       "#666",
         plotMarkerColor: "#999",
         axisLabelColor:  "#666",
@@ -53,23 +55,32 @@ var PiCard = (function() {
         }
         var userColors = getUserColors(users);
 
+        var plots = {};
+        $.each(users, function(i, user) {
+            plots[user] = new Kinetic.Layer();
+            plots[user].setOpacity(opt.activeOpacity);
+        });
+
         target.empty();
 
         var legend = $("<div style='margin-bottom: 1em'>"
             + "<span style='margin-right: 1ex; white-space: nowrap'>"
             + loc.summaryLabel + " " + formatNumber(grandTotal)
             + "</span></div>");
-        for (var i = 0; i < users.length; i++) {
+        $.each(users, function(i, user) {
             legend.append(" ");
             legend.append($("<span>")
                 .css({
-                    color:       userColors[users[i]],
+                    color:       userColors[user],
                     marginRight: "1ex",
-                    whiteSpace:  "nowrap"
+                    whiteSpace:  "nowrap",
+                    cursor:      "help"
                 })
-                .text(users[i]
-                    + " (" + formatNumber(userTotals[users[i]]) + ")"));
-        }
+                .mouseover({ user: user, plots: plots }, setActive)
+                .mouseout({ user: null, plots: plots }, setActive)
+                .text(user + " (" + formatNumber(userTotals[user]) + ")")
+                );
+        });
         target.append(legend);
 
         var containerID = target.attr("id") + "-container";
@@ -83,8 +94,27 @@ var PiCard = (function() {
             height:    measure.height
         });
         stage.add(createPlotArea(measure));
-        stage.add(createPlot(data, userColors, measure));
+        createPlots(plots, data, userColors, measure);
+        $.each(plots, function(user, plot) {
+            stage.add(plot);
+        });
         stage.add(createAxes(measure));
+    };
+
+    var setActive = function(event) {
+        var user = event.data.user;
+        var plots = event.data.plots;
+        $.each(plots, function(u, plot) {
+            setOpacity(plot, (user == null || user == u)
+                ? opt.activeOpacity : opt.inactiveOpacity);
+        });
+    };
+
+    var setOpacity = function(plot, opacity) {
+        if (plot.getOpacity() != opacity) {
+            plot.setOpacity(opacity);
+            plot.draw();
+        }
     };
 
     var createPlotArea = function(measure) {
@@ -113,10 +143,9 @@ var PiCard = (function() {
         return plotArea;
     };
 
-    var createPlot = function(data, userColors, measure) {
+    var createPlots = function(plots, data, userColors, measure) {
         var totals = calculateTotals(data);
         var max = getMaximum(totals);
-        var plot = new Kinetic.Layer();
         var x0 = measure.yLabelWidth + opt.labelMargin + opt.axisWidth
             + opt.plotPadding + opt.maxPieRadius;
         var y = opt.plotPadding + opt.maxPieRadius;
@@ -124,13 +153,52 @@ var PiCard = (function() {
             var x = x0;
             for (var h = 0; h < 24; h++) {
                 if (totals[d] && totals[d][h]) {
-                    plotValue(d, h, data, totals, max, plot, x, y, userColors);
+                    plotPie(d, h, data, totals, max, plots, x, y, userColors);
                 }
                 x += opt.maxPieRadius * 2;
             }
             y += opt.maxPieRadius * 2;
         }
-        return plot;
+    };
+
+    var plotPie = function(d, h, data, totals, max, plots, x, y, userColors) {
+        var total = totals[d][h];
+        var ratio = getRatio(total, max);
+        if (ratio <= 0) {
+            return;
+        }
+        var radius = ratio * opt.maxPieRadius;
+        var angle = (opt.startAngle === null)
+            ? Math.random() * 360 : opt.startAngle;
+        for (user in data) {
+            if (!data[user][d] || !data[user][d][h]) {
+                continue;
+            }
+            var degrees = 360 * (data[user][d][h] / total);
+            if (opt.clockWise) {
+                degrees = -degrees;
+            }
+            var wedge = new Kinetic.Wedge({
+                x:           x,
+                y:           y,
+                radius:      radius,
+                rotationDeg: angle,
+                angleDeg:    degrees,
+                fill:        userColors[user]
+            });
+            plots[user].add(wedge);
+            angle += degrees;
+        }
+    };
+
+    var getRatio = function(value, max) {
+        if (value <= 0) {
+            return 0;
+        }
+        var transform = (opt.scale == "quad") ? Math.sqrt
+            : (opt.scale == "log") ? Math.log
+            : function(n) { return n; };
+        return transform(value) / transform(max);
     };
 
     var createAxes = function(measure) {
@@ -187,46 +255,6 @@ var PiCard = (function() {
             axes.add(text);
             y += opt.maxPieRadius * 2;
         }
-    };
-
-    var plotValue = function(d, h, data, totals, max, plot, x, y, userColors) {
-        var total = totals[d][h];
-        var ratio = getRatio(total, max);
-        if (ratio <= 0) {
-            return;
-        }
-        var radius = ratio * opt.maxPieRadius;
-        var angle = (opt.startAngle === null)
-            ? Math.random() * 360 : opt.startAngle;
-        for (user in data) {
-            if (!data[user][d] || !data[user][d][h]) {
-                continue;
-            }
-            var degrees = 360 * (data[user][d][h] / total);
-            if (opt.clockWise) {
-                degrees = -degrees;
-            }
-            var wedge = new Kinetic.Wedge({
-                x:           x,
-                y:           y,
-                radius:      radius,
-                rotationDeg: angle,
-                angleDeg:    degrees,
-                fill:        userColors[user]
-            });
-            plot.add(wedge);
-            angle += degrees;
-        }
-    };
-
-    var getRatio = function(value, max) {
-        if (value <= 0) {
-            return 0;
-        }
-        var transform = (opt.scale == "quad") ? Math.sqrt
-            : (opt.scale == "log") ? Math.log
-            : function(n) { return n; };
-        return transform(value) / transform(max);
     };
 
     var getUserColors = function(users) {
