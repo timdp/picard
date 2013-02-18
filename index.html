@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>PiCard Example</title>
+<title>PiCard</title>
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="picard.css">
 <link rel="stylesheet" href="example.css">
@@ -19,22 +19,23 @@
 <script src="picard.view.tabbed.js"></script>
 <script>
 $(document).ready(function() {
-    var opt = { maxPieRadius: 14 };
+    var options = { maxPieRadius: 14 };
     var token = new Date().getTime();
     new PiCard.View.Single(
         $("#single-container"),
         "example-data/project1.json?" + token,
-        opt
+        options
     );
     new PiCard.View.Tabbed(
-        $("#tabs-container"), [
+        $("#tabs-container"),
+        [
             { name: "Project A", url: "example-data/project1.json?" + token },
             { name: "Project B", url: "example-data/project2.json?" + token },
             { name: "Project C", url: "example-data/project3.json?" + token },
             { name: "Project D", url: "example-data/project4.json?" + token },
             { name: "Project E", url: "example-data/project5.json?" + token }
         ],
-        opt
+        options
     );
 });
 </script>
@@ -43,26 +44,28 @@ $(document).ready(function() {
 
 <div id="container">
 
-<h1>PiCard</h1>
-<p>This page shows a demonstration of <a
-href="https://github.com/timdp/picard">PiCard</a>
-with some dummy data and mostly default options.</p>
+    <h1>PiCard</h1>
+    <p>
+        This page shows a demonstration of
+        <a href="https://github.com/timdp/picard">PiCard</a>
+        with some dummy data and mostly default options.
+    </p>
 
-<h2>Single Chart</h2>
-<div id="single-container">
-Loading&nbsp;&hellip;
-</div>
+    <h2>Single Chart</h2>
+    <div id="single-container">
+        Loading&nbsp;&hellip;
+    </div>
 
-<h2>Multiple Charts</h2>
-<div id="tabs-container">
-Loading&nbsp;&hellip;
-</div>
+    <h2>Multiple Charts</h2>
+    <div id="tabs-container">
+        Loading&nbsp;&hellip;
+    </div>
 
-<div style="position: absolute; top: 0; right: 0; z-index: 1000;">
-    <a href="https://github.com/timdp/picard"><img
-    src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
-    alt="Fork me on GitHub" style="border: 0;"></a>
-</div>
+    <div style="position: absolute; top: 0; right: 0; z-index: 1000;">
+        <a href="https://github.com/timdp/picard"><img
+        src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+        alt="Fork me on GitHub" style="border: 0;"></a>
+    </div>
 
 </div>
 
