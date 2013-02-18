@@ -35,8 +35,14 @@ fi
 
 rm -f "$uncompressed" "$compressed"
 
-sources="picard picard.locale.$locale picard.configurable picard.localized
-    picard.chart picard.view"
+sources=$(cat <<END
+    picard
+    picard.locale.$locale
+    picard.configurable
+    picard.localized
+    picard.chart
+    picard.view
+END)
 
 test $single -gt 0 && sources="$sources picard.view.single"
 test $tabbed -gt 0 && sources="$sources picard.view.tabbed"
