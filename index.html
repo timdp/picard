@@ -14,7 +14,11 @@
 <script>
 $(document).ready(function() {
     var token = new Date().getTime();
-    new PiCard.Tabs($("#container"), [
+    $.ajax("example-data/project1.json?" + token)
+        .done(function(data) {
+            new PiCard.Chart($("#single-container"), data);
+        });
+    new PiCard.Tabs($("#tabs-container"), [
         { name: "Project A", url: "example-data/project1.json?" + token },
         { name: "Project B", url: "example-data/project2.json?" + token },
         { name: "Project C", url: "example-data/project3.json?" + token },
@@ -25,10 +29,21 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
-<p>This is a demonstration of <a
-href="https://github.com/timdp/picard">PiCard</a> with some dummy data.</p>
-<div id="container">
+
+<h1>PiCard</h1>
+<p>This page shows a demonstration of <a
+href="https://github.com/timdp/picard">PiCard</a>
+with some dummy data and default options.</p>
+
+<h2>Single Chart</h2>
+<div id="single-container">
 Loading&nbsp;&hellip;
 </div>
+
+<h2>Multiple Charts</h2>
+<div id="tabs-container">
+Loading&nbsp;&hellip;
+</div>
+
 </body>
 </html>
