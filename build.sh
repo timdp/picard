@@ -48,13 +48,15 @@ test $single -gt 0 && sources="$sources picard.view.single"
 test $tabbed -gt 0 && sources="$sources picard.view.tabbed"
 
 echo -n "Included source files:"
-for file in ${sources[@]}; do
+for file in $sources; do
     echo -n " $file.js"
 done
 echo
 
 echo "Creating file $uncompressed ..."
-for file in $sources; do cat "$file.js"; done > "$uncompressed"
+for file in $sources; do
+    cat "$file.js";
+done > "$uncompressed"
 
 echo "Compiling to $compressed using Closure Compiler ..."
 curl -s \
