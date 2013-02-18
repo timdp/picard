@@ -7,6 +7,7 @@ single=0
 tabbed=0
 build_dir=dist
 force=0
+all=0
 
 while test $#; do
     case $1 in
@@ -15,11 +16,14 @@ while test $#; do
         -t) tabbed=1                              ;;
         -o) build_dir="$2"; shift                 ;;
         -f) force=1                               ;;
+        -a) all=1                                 ;;
         -*) echo "Invalid option: $1" >&2; exit 1 ;;
         *)  break                                 ;;
     esac
     shift
 done
+
+test $all -gt 0 && { single=1; tabbed=1; }
 
 uncompressed="$build_dir/picard.js"
 compressed="$build_dir/picard.min.js"
