@@ -8,11 +8,13 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
 <script src="//d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.min.js"></script>
-<script src="picard.js"></script>
+<script src="picard2.js"></script>
+<script src="picard.chart.js"></script>
+<script src="picard.tabs.js"></script>
 <script>
 $(document).ready(function() {
     var token = new Date().getTime();
-    PiCard.initialize($("#container"), [
+    new PiCard.Tabs($("#container"), [
         { name: "Project A", url: "example-data/project1.json?" + token },
         { name: "Project B", url: "example-data/project2.json?" + token },
         { name: "Project C", url: "example-data/project3.json?" + token },
