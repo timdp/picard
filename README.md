@@ -7,7 +7,21 @@ Usage
 -----
 
 Documentation for PiCard is pending. In the meantime, please take a look at
-the [example](http://timdp.github.com/picard/).
+the [examples](http://timdp.github.com/picard/).
+
+Ingredients
+-----------
+
+- [jQuery](http://jquery.com/) 1.9.1
+- [jQuery UI](http://jqueryui.com/) 1.10.1
+- [KineticJS](http://kineticjs.com/) 4.3.3
+- Pie
+
+Compatibility
+-------------
+
+PiCard should work on any modern Web browser. Internet Explorer is supported
+from version 9 onwards.
 
 Author
 ------
