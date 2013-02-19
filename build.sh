@@ -59,12 +59,15 @@ for file in $sources; do
 done > "$uncompressed"
 
 echo "Compiling to $compressed using Closure Compiler ..."
-curl -s \
-    -d compilation_level=SIMPLE_OPTIMIZATIONS \
-    -d output_format=text \
-    -d output_info=compiled_code \
-    --data-urlencode "js_code@$uncompressed" \
-    http://closure-compiler.appspot.com/compile \
-    > "$compressed"
+if test -e compiler.jar; then
+    java -jar compiler.jar --js "$uncompressed" --js_output_file "$compressed"
+else
+    curl -s \
+        -d output_format=text \
+        -d output_info=compiled_code \
+        --data-urlencode "js_code@$uncompressed" \
+        http://closure-compiler.appspot.com/compile \
+        > "$compressed"
+fi
 
 echo "Build complete!"

@@ -1,2 +1,4 @@
 dist/*
 !dist/remove.me
+
+compiler.jar
