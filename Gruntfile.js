@@ -42,19 +42,30 @@ module.exports = function(grunt) {
                 dest: "dist/picard.min.js"
             }
         },
+        concat: {
+            build: {
+                src: [ "src/picard.css", "example/style.css" ],
+                dest: "dist/combined.css"
+            }
+        },
         cssmin: {
             options: {
                 banner: banner
             },
             build: {
-                src: "src/picard.css",
-                dest: "dist/picard.min.css"
+                src: "dist/combined.css",
+                dest: "dist/combined.min.css"
             }
+        },
+        clean: {
+            build: [ "dist/combined.css" ]
         }
     });
 
     grunt.loadNpmTasks("grunt-contrib-uglify");
+    grunt.loadNpmTasks("grunt-contrib-concat");
     grunt.loadNpmTasks("grunt-css");
+    grunt.loadNpmTasks("grunt-contrib-clean");
 
-    grunt.registerTask("default", [ "uglify", "cssmin" ]);
+    grunt.registerTask("default", [ "uglify", "concat", "cssmin", "clean" ]);
 };

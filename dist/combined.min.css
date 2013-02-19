@@ -1,0 +1,6 @@
+/* PiCard
+ * Copyright (c) 2013 Tim De Pauw <https://github.com/timdp/picard>
+ * Released under the MIT License
+ */
+
+.picard-legend{margin-bottom:1em}.picard-legend span{margin-right:1ex;white-space:nowrap}.picard-legend .picard-legend-item{cursor:help}.picard-legend .picard-legend-item:hover{text-decoration:underline}html,body{background:#F0F0F0;color:#000;margin:0;padding:0;line-height:150%;font-family:Arial,Helvetica,sans-serif;font-size:normal}input,button,select,optgroup,option,textarea{font-family:Arial,Helvetica,sans-serif;font-size:100%}#container{background:#fff;position:relative;left:50%;margin-left:-450px;width:800px;padding:50px}h1{font-size:225%;font-weight:400;font-style:normal;margin:0 0 .8em}h2{font-size:150%;font-weight:400;font-style:normal;margin:2em 0 .8em}h1+h2{margin-top:1.5em}a:link,a:visited{color:#000;text-decoration:underline}a:hover{color:#666}a:active{color:#C00}#tabs-container{font-size:small}
