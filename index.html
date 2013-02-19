@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <title>PiCard</title>
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="picard.css">
-<link rel="stylesheet" href="example.css">
+<link rel="stylesheet" href="src/picard.css">
+<link rel="stylesheet" href="example/style.css">
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
 <script src="//d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.3.3.min.js"></script>
@@ -23,17 +23,17 @@ $(document).ready(function() {
     var token = new Date().getTime();
     new PiCard.View.Single(
         $("#single-container"),
-        "example-data/project1.json?" + token,
+        "example/data/project1.json?" + token,
         options
     );
     new PiCard.View.Tabbed(
         $("#tabs-container"),
         [
-            { name: "Project A", url: "example-data/project1.json?" + token },
-            { name: "Project B", url: "example-data/project2.json?" + token },
-            { name: "Project C", url: "example-data/project3.json?" + token },
-            { name: "Project D", url: "example-data/project4.json?" + token },
-            { name: "Project E", url: "example-data/project5.json?" + token }
+            { name: "Project A", url: "example/data/project1.json?" + token },
+            { name: "Project B", url: "example/data/project2.json?" + token },
+            { name: "Project C", url: "example/data/project3.json?" + token },
+            { name: "Project D", url: "example/data/project4.json?" + token },
+            { name: "Project E", url: "example/data/project5.json?" + token }
         ],
         options
     );

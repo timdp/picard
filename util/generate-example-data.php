@@ -35,6 +35,6 @@ foreach (range(1, $num_projects) as $project_id) {
             }
         }
     }
-    $file = "../example-data/project$project_id.json";
+    $file = "../example/data/project$project_id.json";
     file_put_contents($file, json_encode($data, JSON_FORCE_OBJECT));
 }
