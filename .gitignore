@@ -1,4 +1,2 @@
 dist/*
-!dist/remove.me
-
-compiler.jar
+node_modules

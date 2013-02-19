@@ -1,0 +1,16 @@
+{
+  "name": "PiCard",
+  "version": "0.0.0",
+  "homepage": "https://github.com/timdp/picard",
+  "description": "GitHub-style punchcards meet pie charts",
+  "author": {
+    "name": "Tim De Pauw",
+    "url": "http://timdp.github.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/timdp/picard.git"
+  },
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}
