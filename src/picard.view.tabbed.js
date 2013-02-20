@@ -8,6 +8,10 @@ PiCard.View.Tabbed = PiCard.defineClass(
     },
 
     {
+        defaultOptions: {
+            linkSummaryLegendItems: true
+        },
+
         initialize: function() {
             var that = this;
             var queue = [];
@@ -61,9 +65,24 @@ PiCard.View.Tabbed = PiCard.defineClass(
                         that.processQueue(queue, summaryData);
                     });
             } else {
-                new PiCard.Chart($("#picard-tab-summary"), summaryData,
-                    that.options);
+                var container = $("#picard-tab-summary");
+                var options = that.options.linkSummaryLegendItems
+                    ? $.extend({ legendItemTag: "a" }, that.options)
+                    : that.options;
+                new PiCard.Chart(container, summaryData, options);
+                if (that.options.linkSummaryLegendItems) {
+                    that.linkSummaryLegendItems(container);
+                }
             }
+        },
+
+        linkSummaryLegendItems: function(summaryContainer) {
+            var tabs = this.container.find(".ui-tabs-anchor");
+            summaryContainer.find(".picard-legend-item")
+                .each(function(index, item) {
+                    var tab = tabs[index + 1];
+                    $(item).click(function() { tab.click(); });
+                });
         },
 
         updateSummary: function(name, data, summaryData) {
