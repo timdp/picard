@@ -53,7 +53,7 @@ PiCard.Chart = PiCard.defineClass(
             that.createLegend();
             that.prepareContainer();
             that.createStage();
-            that.container.trigger("picard.ready", [ that ]);
+            that.container.trigger("ready.picard", [ that ]);
         },
 
         determineUserNames: function() {
@@ -138,19 +138,24 @@ PiCard.Chart = PiCard.defineClass(
                 $.each(that.options.legendColorProperties, function(i, prop) {
                     css[prop] = that.userColors[user];
                 });
-                that.legend.append($("<span>")
+                var item = $("<span>")
                     .attr("class", "picard-legend-item")
-                    .mouseover({ user: user, that: that }, that.setActive)
-                    .mouseout({ user: null, that: that }, that.setActive)
-                    .html(code)
-                    .css(css));
+                    .css(css)
+                    .html(code);
+                item
+                    .mouseover({ user: user, that: that, legendItem: item },
+                        that.setActive)
+                    .mouseout({ user: null, that: that, legendItem: item },
+                        that.setActive);
+                that.legend.append(item);
             });
         },
 
         setActive: function(event) {
             var user = event.data.user;
             var that = event.data.that;
-            that.container.trigger("picard.activate", [ that, user ]);
+            var item = event.data.legendItem;
+            that.container.trigger("activate.picard", [ that, item, user ]);
             $.each(that.plots, function(u, plot) {
                 that.setOpacity(plot, (user === null || user == u)
                     ? that.options.activeOpacity
