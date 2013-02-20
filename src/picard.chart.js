@@ -11,33 +11,33 @@ PiCard.Chart = PiCard.defineClass(
 
     {
         defaultOptions: {
-            axisWidth:           1,
-            plotPadding:         10,
-            labelMargin:         10,
-            plotMarkerSize:      6,
-            plotMarkerWidth:     1,
-            minPieRadius:        2,
-            maxPieRadius:        20,
-            startAngle:          -90,
-            clockwise:           true,
-            useLegendBackground: false,
-            drawAllPlotMarkers:  false,
-            dotScale:            "quad",
-            legendFormat:        "{0} ({1})",
-            fontFamily:          "Verdana, Arial, Helvetica, sans-serif",
-            fontSize:            12,
-            activeOpacity:       1.0,
-            inactiveOpacity:     0.2,
-            axisColor:           "#666",
-            plotMarkerColor:     "#999",
-            axisLabelColor:      "#666",
-            pieColors:           [
+            axisWidth:             1,
+            plotPadding:           10,
+            labelMargin:           10,
+            plotMarkerSize:        6,
+            plotMarkerWidth:       1,
+            minPieRadius:          2,
+            maxPieRadius:          20,
+            startAngle:            -90,
+            clockwise:             true,
+            legendColorProperties: [ "color" ],
+            drawAllPlotMarkers:    false,
+            dotScale:              "quad",
+            legendFormat:          "{0} ({1})",
+            fontFamily:            "Verdana, Arial, Helvetica, sans-serif",
+            fontSize:              12,
+            activeOpacity:         1.0,
+            inactiveOpacity:       0.2,
+            axisColor:             "#666",
+            plotMarkerColor:       "#999",
+            axisLabelColor:        "#666",
+            pieColors:             [
                 "#C90", "#0C9", "#90C", "#9C0", "#09C", "#C09",
                 "#C00", "#0C0", "#00C", "#099", "#909", "#990",
                 "#C66", "#6C6", "#66C", "#999"
             ],
-            userColors:          {},
-            usersKey:            ".users"
+            userColors:            {},
+            usersKey:              ".users"
         },
 
         initialize: function() {
@@ -117,8 +117,6 @@ PiCard.Chart = PiCard.defineClass(
                 userTotals[user] = total;
                 grandTotal += total;
             });
-            var legendProperty = that.options.useLegendBackground
-                ? "background-color" : "color";
             that.legend = $("<div/>")
                 .attr("class", "picard-legend")
                 .append($("<span/>")
@@ -136,12 +134,16 @@ PiCard.Chart = PiCard.defineClass(
                         return strings[parseInt(m1, 10)];
                     });
                 that.legend.append(" ");
+                var css = {};
+                $.each(that.options.legendColorProperties, function(i, prop) {
+                    css[prop] = that.userColors[user];
+                });
                 that.legend.append($("<span>")
                     .attr("class", "picard-legend-item")
-                    .css(legendProperty, that.userColors[user])
                     .mouseover({ user: user, that: that }, that.setActive)
                     .mouseout({ user: null, that: that }, that.setActive)
-                    .html(code));
+                    .html(code)
+                    .css(css));
             });
         },
 
