@@ -2,15 +2,20 @@
     margin-bottom: 1em;
 }
 
-.picard-legend span {
+.picard-legend .picard-legend-label,
+.picard-legend .picard-legend-item {
     margin-right: 1ex;
     white-space: nowrap;
 }
 
-.picard-legend .picard-legend-item {
+.picard-legend .picard-legend-item:hover {
+    text-decoration: underline;
+}
+
+.picard-legend span.picard-legend-item {
     cursor: help;
 }
 
-.picard-legend .picard-legend-item:hover {
-    text-decoration: underline;
+.picard-legend a.picard-legend-item {
+    cursor: pointer;
 }

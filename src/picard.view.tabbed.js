@@ -8,14 +8,21 @@ PiCard.View.Tabbed = PiCard.defineClass(
     },
 
     {
+        defaultOptions: {
+            includeSummary:         true,
+            linkSummaryLegendItems: true
+        },
+
         initialize: function() {
             var that = this;
             var queue = [];
             that.container.empty();
             that.tabList = $("<ul/>");
             that.container.append(that.tabList);
-            var tabID = "picard-tab-summary";
-            var tab = that.addTab(that.locale.summaryTitle, tabID);
+            if (that.options.includeSummary) {
+                var tabID = "picard-tab-summary";
+                that.addTab(that.locale.summaryTitle, tabID);
+            }
             $.each(that.sources, function(i, source) {
                 var tabName = source.name;
                 var tabID = "picard-tab-" + i;
@@ -49,7 +56,9 @@ PiCard.View.Tabbed = PiCard.defineClass(
                 $.ajax(entry.url)
                     .done(function(data) {
                         new PiCard.Chart(entry.target, data, that.options);
-                        that.updateSummary(entry.name, data, summaryData);
+                        if (that.options.includeSummary) {
+                            that.updateSummary(entry.name, data, summaryData);
+                        }
                     })
                     .fail(function(xhr, stat, err) {
                         entry.target.text(that.locale.loadingFailedText);
@@ -60,10 +69,25 @@ PiCard.View.Tabbed = PiCard.defineClass(
                     .always(function() {
                         that.processQueue(queue, summaryData);
                     });
-            } else {
-                new PiCard.Chart($("#picard-tab-summary"), summaryData,
-                    that.options);
+            } else if (that.options.includeSummary) {
+                var container = $("#picard-tab-summary");
+                var options = that.options.linkSummaryLegendItems
+                    ? $.extend({ legendItemTag: "a" }, that.options)
+                    : that.options;
+                new PiCard.Chart(container, summaryData, options);
+                if (that.options.linkSummaryLegendItems) {
+                    that.linkSummaryLegendItems(container);
+                }
             }
+        },
+
+        linkSummaryLegendItems: function(summaryContainer) {
+            var tabs = this.container.find(".ui-tabs-anchor");
+            summaryContainer.find(".picard-legend-item")
+                .each(function(index, item) {
+                    var tab = tabs[index + 1];
+                    $(item).click(function() { tab.click(); });
+                });
         },
 
         updateSummary: function(name, data, summaryData) {

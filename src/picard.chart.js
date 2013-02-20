@@ -36,6 +36,7 @@ PiCard.Chart = PiCard.defineClass(
                 "#C00", "#0C0", "#00C", "#099", "#909", "#990",
                 "#C66", "#6C6", "#66C", "#999"
             ],
+            legendItemTag:         "span",
             userColors:            {},
             usersKey:              ".users"
         },
@@ -138,7 +139,7 @@ PiCard.Chart = PiCard.defineClass(
                 $.each(that.options.legendColorProperties, function(i, prop) {
                     css[prop] = that.userColors[user];
                 });
-                var item = $("<span>")
+                var item = $("<" + that.options.legendItemTag + "/>")
                     .attr("class", "picard-legend-item")
                     .css(css)
                     .html(code);
