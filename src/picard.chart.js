@@ -11,31 +11,33 @@ PiCard.Chart = PiCard.defineClass(
 
     {
         defaultOptions: {
-            axisWidth:          1,
-            plotPadding:        10,
-            labelMargin:        10,
-            plotMarkerSize:     6,
-            plotMarkerWidth:    1,
-            minPieRadius:       2,
-            maxPieRadius:       20,
-            startAngle:         -90,
-            clockwise:          true,
-            drawAllPlotMarkers: false,
-            dotScale:           "quad",
-            legendFormat:       "{0} ({1})",
-            fontFamily:         "Verdana, Arial, Helvetica, sans-serif",
-            fontSize:           12,
-            activeOpacity:      1.0,
-            inactiveOpacity:    0.2,
-            axisColor:          "#666",
-            plotMarkerColor:    "#999",
-            axisLabelColor:     "#666",
-            pieColors:          [
+            axisWidth:             1,
+            plotPadding:           10,
+            labelMargin:           10,
+            plotMarkerSize:        6,
+            plotMarkerWidth:       1,
+            minPieRadius:          2,
+            maxPieRadius:          20,
+            startAngle:            -90,
+            clockwise:             true,
+            legendColorProperties: [ "color" ],
+            drawAllPlotMarkers:    false,
+            dotScale:              "quad",
+            legendFormat:          "{0} ({1})",
+            fontFamily:            "Verdana, Arial, Helvetica, sans-serif",
+            fontSize:              12,
+            activeOpacity:         1.0,
+            inactiveOpacity:       0.2,
+            axisColor:             "#666",
+            plotMarkerColor:       "#999",
+            axisLabelColor:        "#666",
+            pieColors:             [
                 "#C90", "#0C9", "#90C", "#9C0", "#09C", "#C09",
                 "#C00", "#0C0", "#00C", "#099", "#909", "#990",
                 "#C66", "#6C6", "#66C", "#999"
             ],
-            usersKey:           ".users"
+            userColors:            {},
+            usersKey:              ".users"
         },
 
         initialize: function() {
@@ -51,7 +53,7 @@ PiCard.Chart = PiCard.defineClass(
             that.createLegend();
             that.prepareContainer();
             that.createStage();
-            that.container.trigger("picard.ready", [ that ]);
+            that.container.trigger("ready.picard", [ that ]);
         },
 
         determineUserNames: function() {
@@ -78,7 +80,9 @@ PiCard.Chart = PiCard.defineClass(
         prepareContainer: function() {
             var that = this;
             var id = that.container.attr("id") + "-chart";
-            that.chartContainer = $("<div>").attr("id", id);
+            that.chartContainer = $("<div>")
+                .attr("class", "picard-chart")
+                .attr("id", id);
             that.container
                 .empty()
                 .append(that.legend)
@@ -130,19 +134,28 @@ PiCard.Chart = PiCard.defineClass(
                         return strings[parseInt(m1, 10)];
                     });
                 that.legend.append(" ");
-                that.legend.append($("<span>")
+                var css = {};
+                $.each(that.options.legendColorProperties, function(i, prop) {
+                    css[prop] = that.userColors[user];
+                });
+                var item = $("<span>")
                     .attr("class", "picard-legend-item")
-                    .css("color", that.userColors[user])
-                    .mouseover({ user: user, that: that }, that.setActive)
-                    .mouseout({ user: null, that: that }, that.setActive)
-                    .html(code));
+                    .css(css)
+                    .html(code);
+                item
+                    .mouseover({ user: user, that: that, legendItem: item },
+                        that.setActive)
+                    .mouseout({ user: null, that: that, legendItem: item },
+                        that.setActive);
+                that.legend.append(item);
             });
         },
 
         setActive: function(event) {
             var user = event.data.user;
             var that = event.data.that;
-            that.container.trigger("picard.activate", [ that, user ]);
+            var item = event.data.legendItem;
+            that.container.trigger("activate.picard", [ that, item, user ]);
             $.each(that.plots, function(u, plot) {
                 that.setOpacity(plot, (user === null || user == u)
                     ? that.options.activeOpacity
@@ -350,9 +363,11 @@ PiCard.Chart = PiCard.defineClass(
         setUserColors: function() {
             var that = this;
             that.userColors = {};
-            $.each(that.users, function(i, user) {
-                that.userColors[user]
-                    = that.options.pieColors[i % that.options.pieColors.length];
+            var i = 0;
+            var numPieColors = that.options.pieColors.length;
+            $.each(that.users, function(idx, user) {
+                that.userColors[user] = that.options.userColors[user]
+                    || that.options.pieColors[i++ % numPieColors];
             });
         },
 
