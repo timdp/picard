@@ -35,6 +35,7 @@ PiCard.Chart = PiCard.defineClass(
                 "#C00", "#0C0", "#00C", "#099", "#909", "#990",
                 "#C66", "#6C6", "#66C", "#999"
             ],
+            userColors:         {},
             usersKey:           ".users"
         },
 
@@ -352,9 +353,11 @@ PiCard.Chart = PiCard.defineClass(
         setUserColors: function() {
             var that = this;
             that.userColors = {};
-            $.each(that.users, function(i, user) {
-                that.userColors[user]
-                    = that.options.pieColors[i % that.options.pieColors.length];
+            var i = 0;
+            var numPieColors = that.options.pieColors.length;
+            $.each(that.users, function(idx, user) {
+                that.userColors[user] = that.options.userColors[user]
+                    || that.options.pieColors[i++ % numPieColors];
             });
         },
 
