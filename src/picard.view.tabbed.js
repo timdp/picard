@@ -20,13 +20,12 @@ PiCard.View.Tabbed = PiCard.defineClass(
             that.tabList = $("<ul/>");
             that.container.append(that.tabList);
             if (that.options.includeSummary) {
-                var tabID = "picard-tab-summary";
-                that.addTab(that.locale.summaryTitle, tabID);
+                that.summaryTab = that.addTab(that.locale.summaryTitle, true);
+                that.summaryTab.addClass("picard-tab-summary");
             }
             $.each(that.sources, function(i, source) {
                 var tabName = source.name;
-                var tabID = "picard-tab-" + i;
-                var tab = that.addTab(tabName, tabID);
+                var tab = that.addTab(tabName);
                 queue.push({
                     name:   tabName,
                     url:    source.url,
@@ -38,12 +37,15 @@ PiCard.View.Tabbed = PiCard.defineClass(
             that.processQueue(queue, summaryData);
         },
 
-        addTab: function(tabName, tabID) {
+        addTab: function(tabName) {
             var that = this;
+            var tabID = "picard-tab-" + PiCard.View.Tabbed.tabCount++;
             that.tabList.append($("<li/>")
                 .append($("<a/>")
                     .attr("href", "#" + tabID).text(tabName)));
-            var tab = $("<div/>").attr("id", tabID).addClass("picard-tab")
+            var tab = $("<div/>")
+                .attr("id", tabID)
+                .addClass("picard-tab")
                 .text(that.locale.loadingText);
             that.container.append(tab);
             return tab;
@@ -69,8 +71,8 @@ PiCard.View.Tabbed = PiCard.defineClass(
                     .always(function() {
                         that.processQueue(queue, summaryData);
                     });
-            } else if (that.options.includeSummary) {
-                var container = $("#picard-tab-summary");
+            } else if (that.summaryTab) {
+                var container = that.summaryTab;
                 var options = that.options.linkSummaryLegendItems
                     ? $.extend({ legendItemTag: "a" }, that.options)
                     : that.options;
@@ -110,3 +112,5 @@ PiCard.View.Tabbed = PiCard.defineClass(
         }
     }
 );
+
+PiCard.View.Tabbed.tabCount = 0;
