@@ -78,7 +78,9 @@ PiCard.Chart = PiCard.defineClass(
         prepareContainer: function() {
             var that = this;
             var id = that.container.attr("id") + "-chart";
-            that.chartContainer = $("<div>").attr("id", id);
+            that.chartContainer = $("<div>")
+                .attr("class", "picard-chart")
+                .attr("id", id);
             that.container
                 .empty()
                 .append(that.legend)
