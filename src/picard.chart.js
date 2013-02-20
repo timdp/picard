@@ -16,6 +16,7 @@ PiCard.Chart = PiCard.defineClass(
             labelMargin:        10,
             plotMarkerSize:     6,
             plotMarkerWidth:    1,
+            minPieRadius:       2,
             maxPieRadius:       20,
             startAngle:         -90,
             clockwise:          true,
@@ -219,7 +220,8 @@ PiCard.Chart = PiCard.defineClass(
             if (ratio <= 0) {
                 return;
             }
-            var radius = ratio * that.options.maxPieRadius;
+            var radius = Math.max(that.options.minPieRadius,
+                ratio * that.options.maxPieRadius);
             var angle = (that.options.startAngle === null)
                 ? Math.random() * 360 : that.options.startAngle;
             $.each(that.data, function(user, perDay) {
