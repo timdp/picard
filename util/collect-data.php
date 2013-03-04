@@ -33,7 +33,7 @@ foreach ($dir_list as $repo) {
     }
     $stats = array();
     $cmd = 'cd "' . $path . '" && '
-        . 'git log --all --no-merges --pretty=format:%H,%at,%an';
+        . 'git log --all --pretty=format:%H,%at,%an';
     $ph = popen($cmd, 'r');
     if ($ph !== false) {
         while (($line = fgets($ph)) !== false) {
