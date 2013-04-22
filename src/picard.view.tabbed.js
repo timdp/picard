@@ -134,7 +134,9 @@ PiCard.View.Tabbed = PiCard.defineClass(
                 });
             });
         }
+    },
+
+    {
+        tabCount: 0
     }
 );
-
-PiCard.View.Tabbed.tabCount = 0;
