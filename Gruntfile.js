@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 
     [ "single", "tabbed" ].forEach(function(view) {
         if (!grunt.option("no-" + view)) {
-            console.log("Including view " + view);
+            grunt.log.writeln("Including view " + view);
             sources.push("src/picard.view." + view + ".js");
         }
     });
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         locales = [ "en-us" ];
     }
     locales.forEach(function(locale) {
-        console.log("Including locale " + locale);
+        grunt.log.writeln("Including locale " + locale);
         sources.push("src/picard.locale." + locale + ".js");
     });
 
