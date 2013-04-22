@@ -33,8 +33,8 @@ PiCard.View.Tabbed = PiCard.defineClass(
                 });
             });
             that.container.tabs();
-            var summaryData = {};
-            that.processQueue(queue, summaryData);
+            var chartData = [];
+            that.processQueue(queue, chartData);
         },
 
         addTab: function(tabName) {
@@ -51,36 +51,58 @@ PiCard.View.Tabbed = PiCard.defineClass(
             return tab;
         },
 
-        processQueue: function(queue, summaryData) {
-            var that = this;
-            if (queue.length) {
-                var entry = queue.shift();
-                $.ajax(entry.url)
-                    .done(function(data) {
-                        new PiCard.Chart(entry.target, data, that.options);
-                        if (that.options.includeSummary) {
-                            that.updateSummary(entry.name, data, summaryData);
-                        }
-                    })
-                    .fail(function(xhr, stat, err) {
-                        entry.target.text(that.locale.loadingFailedText);
-                        that.container.trigger("picard.loadingFailed",
-                            [ that, xhr, stat, err,
-                                entry.target, entry.url, entry.name ]);
-                    })
-                    .always(function() {
-                        that.processQueue(queue, summaryData);
-                    });
-            } else if (that.summaryTab) {
-                var container = that.summaryTab;
-                var options = that.options.linkSummaryLegendItems
-                    ? $.extend({ legendItemTag: "a" }, that.options)
-                    : that.options;
-                new PiCard.Chart(container, summaryData, options);
-                if (that.options.linkSummaryLegendItems) {
-                    that.linkSummaryLegendItems(container);
-                }
+        processQueue: function(queue, chartData) {
+            if (queue.length == 0) {
+                return;
             }
+            var that = this;
+            var entry = queue.shift();
+            $.ajax(entry.url)
+                .done(function(data) {
+                    chartData.push({
+                        name:   entry.name,
+                        target: entry.target,
+                        data:   data
+                    });
+                })
+                .fail(function(xhr, stat, err) {
+                    entry.target.text(that.locale.loadingFailedText);
+                    that.container.trigger("picard.loadingFailed",
+                        [ that, xhr, stat, err,
+                            entry.target, entry.url, entry.name ]);
+                })
+                .always(function() {
+                    if (queue.length == 0) {
+                        that.buildCharts(chartData);
+                    } else {
+                        that.processQueue(queue, chartData);
+                    }
+                });
+        },
+
+        buildCharts: function(chartData) {
+            var that = this;
+            if (that.options.includeSummary) {
+                var summaryData = {};
+                $.each(chartData, function(index, item) {
+                    that.updateSummary(item.name, item.data, summaryData);
+                });
+                setTimeout(function() {
+                    var container = that.summaryTab;
+                    var options = that.options.linkSummaryLegendItems
+                        ? $.extend({ legendItemTag: "a" }, that.options)
+                        : that.options;
+                    new PiCard.Chart(container, summaryData, options);
+                    if (that.options.linkSummaryLegendItems) {
+                        that.linkSummaryLegendItems(container);
+                    }
+                }, 0);
+            }
+            $.each(chartData, function(index, item) {
+                setTimeout(function() {
+                    new PiCard.Chart(item.target, item.data, that.options);
+                }, 0);
+            });
         },
 
         linkSummaryLegendItems: function(summaryContainer) {
@@ -88,7 +110,9 @@ PiCard.View.Tabbed = PiCard.defineClass(
             summaryContainer.find(".picard-legend-item")
                 .each(function(index, item) {
                     var tab = tabs[index + 1];
-                    $(item).click(function() { tab.click(); });
+                    $(item).click(function() {
+                        tab.click();
+                    });
                 });
         },
 
