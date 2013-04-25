@@ -10,12 +10,15 @@ var PiCard = {
         }
     },
 
-    defineClass: function(mixins, constr, proto) {
+    defineClass: function(mixins, constr, proto, stat) {
         $.each(mixins, function(i, mixin) {
             $.extend(constr.prototype, mixin.prototype);
         });
         $.extend(constr.prototype, proto);
         constr.prototype.constructor = constr;
+        if (stat) {
+            $.extend(constr, stat);
+        }
         return constr;
     }
 };
