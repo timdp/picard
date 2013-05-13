@@ -248,8 +248,8 @@ PiCard.Chart = PiCard.defineClass(
                         x:           x,
                         y:           y,
                         radius:      radius,
-                        rotationDeg: angle,
-                        angleDeg:    degrees,
+                        rotationDeg: (angle + 360) % 360,
+                        angleDeg:    (degrees + 360) % 360,
                         fill:        that.userColors[user]
                     });
                     that.plots[user].add(wedge);
