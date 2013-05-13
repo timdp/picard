@@ -241,14 +241,13 @@ PiCard.Chart = PiCard.defineClass(
             $.each(that.data, function(user, perDay) {
                 if (perDay[d] && perDay[d][h]) {
                     var degrees = 360 * (perDay[d][h] / total);
-                    if (that.options.clockwise) {
-                        degrees = -degrees;
-                    }
                     var wedge = new Kinetic.Wedge({
                         x:           x,
                         y:           y,
                         radius:      radius,
-                        rotationDeg: angle,
+                        rotationDeg: that.options.clockwise 
+                                         ? 360 - angle - degrees
+                                         : angle,
                         angleDeg:    degrees,
                         fill:        that.userColors[user]
                     });
