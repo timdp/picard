@@ -245,9 +245,9 @@ PiCard.Chart = PiCard.defineClass(
                         x:           x,
                         y:           y,
                         radius:      radius,
-                        rotationDeg: that.options.clockwise 
-                                         ? 360 - angle - degrees
-                                         : angle,
+                        rotationDeg: that.options.clockwise
+                                         ? angle
+                                         : 360 - angle - degrees,
                         angleDeg:    degrees,
                         fill:        that.userColors[user]
                     });
